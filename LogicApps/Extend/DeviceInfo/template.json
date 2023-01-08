@@ -1,0 +1,912 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_la_ExtendedDeviceInfo_name": {
+            "defaultValue": "la-ExtendedDeviceInfo",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_la_ExtendedDeviceInfo_name')]",
+            "location": "westeurope",
+            "tags": {
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "Recurrence": {
+                            "recurrence": {
+                                "frequency": "Day",
+                                "interval": 1
+                            },
+                            "evaluatedRecurrence": {
+                                "frequency": "Day",
+                                "interval": 1
+                            },
+                            "type": "Recurrence"
+                        }
+                    },
+                    "actions": {
+                        "For_each": {
+                            "foreach": "@body('Parse_AadDevices')?['value']",
+                            "actions": {
+                                "ListIntuneDevice": {
+                                    "runAfter": {
+                                        "ListUsers": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Http",
+                                    "inputs": {
+                                        "authentication": {
+                                            "audience": "https://graph.microsoft.com",
+                                            "type": "ManagedServiceIdentity"
+                                        },
+                                        "method": "GET",
+                                        "uri": "https://graph.microsoft.com/beta/deviceManagement/managedDevices?$filter=azureADDeviceId eq '@{items('For_each')?['deviceId']}'"
+                                    }
+                                },
+                                "ListMemberships": {
+                                    "runAfter": {},
+                                    "type": "Http",
+                                    "inputs": {
+                                        "authentication": {
+                                            "audience": "https://graph.microsoft.com",
+                                            "type": "ManagedServiceIdentity"
+                                        },
+                                        "method": "GET",
+                                        "uri": "https://graph.microsoft.com/v1.0/devices/@{items('For_each')?['id']}/transitiveMemberOf"
+                                    }
+                                },
+                                "ListUsers": {
+                                    "runAfter": {
+                                        "ListMemberships": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Http",
+                                    "inputs": {
+                                        "authentication": {
+                                            "audience": "https://graph.microsoft.com",
+                                            "type": "ManagedServiceIdentity"
+                                        },
+                                        "method": "GET",
+                                        "uri": "https://graph.microsoft.com/v1.0/devices/@{items('For_each')?['id']}/registeredUsers"
+                                    }
+                                },
+                                "Parse_IntuneDevice": {
+                                    "runAfter": {
+                                        "ListIntuneDevice": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@body('ListIntuneDevice')",
+                                        "schema": {
+                                            "properties": {
+                                                "@@odata.context": {
+                                                    "type": "string"
+                                                },
+                                                "@@odata.count": {
+                                                    "type": "integer"
+                                                },
+                                                "value": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "activationLockBypassCode": {},
+                                                            "androidSecurityPatchLevel": {
+                                                                "type": "string"
+                                                            },
+                                                            "azureADDeviceId": {
+                                                                "type": "string"
+                                                            },
+                                                            "azureADRegistered": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "complianceGracePeriodExpirationDateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "complianceState": {
+                                                                "type": "string"
+                                                            },
+                                                            "configurationManagerClientEnabledFeatures": {},
+                                                            "deviceActionResults": {
+                                                                "type": "array"
+                                                            },
+                                                            "deviceCategoryDisplayName": {
+                                                                "type": "string"
+                                                            },
+                                                            "deviceEnrollmentType": {
+                                                                "type": "string"
+                                                            },
+                                                            "deviceHealthAttestationState": {},
+                                                            "deviceName": {
+                                                                "type": "string"
+                                                            },
+                                                            "deviceRegistrationState": {
+                                                                "type": "string"
+                                                            },
+                                                            "easActivated": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "easActivationDateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "easDeviceId": {
+                                                                "type": "string"
+                                                            },
+                                                            "emailAddress": {
+                                                                "type": "string"
+                                                            },
+                                                            "enrolledDateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "ethernetMacAddress": {},
+                                                            "exchangeAccessState": {
+                                                                "type": "string"
+                                                            },
+                                                            "exchangeAccessStateReason": {
+                                                                "type": "string"
+                                                            },
+                                                            "exchangeLastSuccessfulSyncDateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "freeStorageSpaceInBytes": {
+                                                                "type": "integer"
+                                                            },
+                                                            "iccid": {},
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "imei": {
+                                                                "type": "string"
+                                                            },
+                                                            "isEncrypted": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "isSupervised": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "jailBroken": {
+                                                                "type": "string"
+                                                            },
+                                                            "lastSyncDateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "managedDeviceName": {
+                                                                "type": "string"
+                                                            },
+                                                            "managedDeviceOwnerType": {
+                                                                "type": "string"
+                                                            },
+                                                            "managementAgent": {
+                                                                "type": "string"
+                                                            },
+                                                            "managementCertificateExpirationDate": {
+                                                                "type": "string"
+                                                            },
+                                                            "manufacturer": {
+                                                                "type": "string"
+                                                            },
+                                                            "meid": {
+                                                                "type": "string"
+                                                            },
+                                                            "model": {
+                                                                "type": "string"
+                                                            },
+                                                            "notes": {},
+                                                            "operatingSystem": {
+                                                                "type": "string"
+                                                            },
+                                                            "osVersion": {
+                                                                "type": "string"
+                                                            },
+                                                            "partnerReportedThreatState": {
+                                                                "type": "string"
+                                                            },
+                                                            "phoneNumber": {
+                                                                "type": "string"
+                                                            },
+                                                            "physicalMemoryInBytes": {
+                                                                "type": "integer"
+                                                            },
+                                                            "remoteAssistanceSessionErrorDetails": {},
+                                                            "remoteAssistanceSessionUrl": {},
+                                                            "requireUserEnrollmentApproval": {},
+                                                            "serialNumber": {
+                                                                "type": "string"
+                                                            },
+                                                            "subscriberCarrier": {
+                                                                "type": "string"
+                                                            },
+                                                            "totalStorageSpaceInBytes": {
+                                                                "type": "integer"
+                                                            },
+                                                            "udid": {},
+                                                            "userDisplayName": {
+                                                                "type": "string"
+                                                            },
+                                                            "userId": {
+                                                                "type": "string"
+                                                            },
+                                                            "userPrincipalName": {
+                                                                "type": "string"
+                                                            },
+                                                            "wiFiMacAddress": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "userId",
+                                                            "deviceName",
+                                                            "managedDeviceOwnerType",
+                                                            "enrolledDateTime",
+                                                            "lastSyncDateTime",
+                                                            "operatingSystem",
+                                                            "complianceState",
+                                                            "jailBroken",
+                                                            "managementAgent",
+                                                            "osVersion",
+                                                            "easActivated",
+                                                            "easDeviceId",
+                                                            "easActivationDateTime",
+                                                            "azureADRegistered",
+                                                            "deviceEnrollmentType",
+                                                            "activationLockBypassCode",
+                                                            "emailAddress",
+                                                            "azureADDeviceId",
+                                                            "deviceRegistrationState",
+                                                            "deviceCategoryDisplayName",
+                                                            "isSupervised",
+                                                            "exchangeLastSuccessfulSyncDateTime",
+                                                            "exchangeAccessState",
+                                                            "exchangeAccessStateReason",
+                                                            "remoteAssistanceSessionUrl",
+                                                            "remoteAssistanceSessionErrorDetails",
+                                                            "isEncrypted",
+                                                            "userPrincipalName",
+                                                            "model",
+                                                            "manufacturer",
+                                                            "imei",
+                                                            "complianceGracePeriodExpirationDateTime",
+                                                            "serialNumber",
+                                                            "phoneNumber",
+                                                            "androidSecurityPatchLevel",
+                                                            "userDisplayName",
+                                                            "configurationManagerClientEnabledFeatures",
+                                                            "wiFiMacAddress",
+                                                            "deviceHealthAttestationState",
+                                                            "subscriberCarrier",
+                                                            "meid",
+                                                            "totalStorageSpaceInBytes",
+                                                            "freeStorageSpaceInBytes",
+                                                            "managedDeviceName",
+                                                            "partnerReportedThreatState",
+                                                            "requireUserEnrollmentApproval",
+                                                            "managementCertificateExpirationDate",
+                                                            "iccid",
+                                                            "udid",
+                                                            "notes",
+                                                            "ethernetMacAddress",
+                                                            "physicalMemoryInBytes",
+                                                            "deviceActionResults"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "Send_Data": {
+                                    "runAfter": {
+                                        "Parse_IntuneDevice": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": "{\n\"id\":\"@{items('For_each')?['id']}\",\n\"AadDeviceId\":\"@{items('For_each')?['deviceId']}\",\n\"IntuneDeviceId\":\"@{first(body('Parse_IntuneDevice')?['value'])?['id']}\",\n\"lastMdmSync\":\"@{first(body('Parse_IntuneDevice')?['value'])?['lastSyncDateTime']}\",\n\"serialNumber\": \"@{first(body('Parse_IntuneDevice')?['value'])?['serialNumber']}\",\n\"deviceOwnership\":\"@{items('For_each')?['deviceOwnership']}\",\n\"displayName\":\"@{items('For_each')?['displayName']}\",\n\"enrollmentType\":\"@{items('For_each')?['enrollmentType']}\",\n\"managementType\":\"@{items('For_each')?['managementType']}\",\n\"manufacturer\":\"@{items('For_each')?['manufacturer']}\",\n\"model\":\"@{items('For_each')?['model']}\",\n\"operatingSystem\":\"@{items('For_each')?['operatingSystem']}\",\n\"operatingSystemVersion\":\"@{items('For_each')?['operatingSystemVersion']}\",\n\"trustType\":\"@{items('For_each')?['trustType']}\",\n\"registrationDateTime\":\"@{items('For_each')?['registrationDateTime']}\",\n\"enrollementProfileName\":\"@{items('For_each')?['enrollmentProfileName']}\",\n\"onPremiseSyncEnabled\":\"@{items('For_each')?['onPremisesSyncEnabled']}\",\n\"sourceType\":\"@{items('For_each')?['sourceType']}\",\n\"accountEnabled\":\"@{items('For_each')?['accountEnabled']}\",\n\"isCompliant\":\"@{items('For_each')?['isCompliant']}\",\n\"isManaged\":\"@{items('For_each')?['isManaged']}\",\n\"GroupMemberships\":@{body('ListMemberships')?['value']},\n\"DeviceUsers\":@{body('ListUsers')?['value']}\n}",
+                                        "headers": {
+                                            "Log-Type": "ExtendedDeviceInfo",
+                                            "time-generated-field": "@{utcNow()}"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/api/logs"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Initialize_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "For_each_2": {
+                            "foreach": "@body('ParsedWindowsUpdateConfig')?['value']",
+                            "actions": {
+                                "For_each_3": {
+                                    "foreach": "@body('ParseWUAssignmentStatus')?['value']",
+                                    "actions": {
+                                        "Send_Data_2": {
+                                            "runAfter": {},
+                                            "type": "ApiConnection",
+                                            "inputs": {
+                                                "body": "{\n\"Devicename\":\"@{items('For_each_3')?['deviceDisplayName']}\",\n\"Status\":\"@{items('For_each_3')?['status']}\",\n\"lastReport\":@{items('For_each_3')?['lastReportedDateTime']},\n\"PolicyId\":\"@{items('For_each_2')?['id']}\",\n\"User\":\"@{items('For_each_3')?['userPrincipalName']}\",\n\"DeviceId\":\"@{items('For_each_3')?['id']}\"\n}",
+                                                "headers": {
+                                                    "Log-Type": "IntuneWindowsUpdateConfigAssignments",
+                                                    "time-generated-field": "@{utcNow()}"
+                                                },
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "post",
+                                                "path": "/api/logs"
+                                            }
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "ParseWUAssignmentStatus": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Foreach"
+                                },
+                                "GetWindowsUpdateConfigurationAssignments": {
+                                    "runAfter": {
+                                        "Send_UpdateConfigs": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Http",
+                                    "inputs": {
+                                        "authentication": {
+                                            "audience": "https://graph.microsoft.com",
+                                            "type": "ManagedServiceIdentity"
+                                        },
+                                        "method": "GET",
+                                        "uri": "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations/@{items('For_each_2')?['id']}/deviceStatuses"
+                                    }
+                                },
+                                "ParseWUAssignmentStatus": {
+                                    "runAfter": {
+                                        "GetWindowsUpdateConfigurationAssignments": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@body('GetWindowsUpdateConfigurationAssignments')",
+                                        "schema": {
+                                            "properties": {
+                                                "value": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "@@odata.type": {
+                                                                "type": "string"
+                                                            },
+                                                            "complianceGracePeriodExpirationDateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "deviceDisplayName": {
+                                                                "type": "string"
+                                                            },
+                                                            "deviceModel": {
+                                                                "type": "string"
+                                                            },
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "lastReportedDateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "status": {
+                                                                "type": "string"
+                                                            },
+                                                            "userName": {
+                                                                "type": "string"
+                                                            },
+                                                            "userPrincipalName": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "@@odata.type",
+                                                            "id",
+                                                            "deviceDisplayName",
+                                                            "userName",
+                                                            "deviceModel",
+                                                            "complianceGracePeriodExpirationDateTime",
+                                                            "status",
+                                                            "lastReportedDateTime",
+                                                            "userPrincipalName"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "Send_UpdateConfigs": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": "@{items('For_each_2')}",
+                                        "headers": {
+                                            "Log-Type": "IntuneWindowsUpdateConfigs",
+                                            "time-generated-field": "@{utcNow()}"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/api/logs"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "ParsedWindowsUpdateConfig": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "GetWindowsUpdateConfiguration": {
+                            "runAfter": {
+                                "For_each": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Http",
+                            "inputs": {
+                                "authentication": {
+                                    "audience": "https://graph.microsoft.com",
+                                    "type": "ManagedServiceIdentity"
+                                },
+                                "method": "GET",
+                                "uri": "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations?$filter=(isof('microsoft.graph.windowsUpdateForBusinessConfiguration'))"
+                            }
+                        },
+                        "Initialize_variable": {
+                            "runAfter": {
+                                "Parse_AadDevices": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "Memberships",
+                                        "type": "string"
+                                    }
+                                ]
+                            }
+                        },
+                        "List_AadDevices": {
+                            "runAfter": {},
+                            "type": "Http",
+                            "inputs": {
+                                "authentication": {
+                                    "audience": "https://graph.microsoft.com",
+                                    "type": "ManagedServiceIdentity"
+                                },
+                                "method": "GET",
+                                "uri": "https://graph.microsoft.com/v1.0/devices"
+                            }
+                        },
+                        "Parse_AadDevices": {
+                            "runAfter": {
+                                "List_AadDevices": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@body('List_AadDevices')",
+                                "schema": {
+                                    "properties": {
+                                        "@@odata.context": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "value": {
+                                            "items": {
+                                                "properties": {
+                                                    "accountEnabled": {
+                                                        "type": [
+                                                            "boolean",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "alternativeSecurityIds": {
+                                                        "items": {
+                                                            "properties": {
+                                                                "identityProvider": {},
+                                                                "key": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "type": {
+                                                                    "type": [
+                                                                        "integer",
+                                                                        "null"
+                                                                    ]
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "type",
+                                                                "identityProvider",
+                                                                "key"
+                                                            ],
+                                                            "type": [
+                                                                "object",
+                                                                "null"
+                                                            ]
+                                                        },
+                                                        "type": [
+                                                            "array",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "approximateLastSignInDateTime": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "complianceExpirationDateTime": {},
+                                                    "createdDateTime": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "deletedDateTime": {},
+                                                    "deviceCategory": {},
+                                                    "deviceId": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "deviceMetadata": {},
+                                                    "deviceOwnership": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "deviceVersion": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "displayName": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "domainName": {},
+                                                    "enrollmentProfileName": {},
+                                                    "enrollmentType": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "extensionAttributes": {
+                                                        "properties": {
+                                                            "extensionAttribute1": {},
+                                                            "extensionAttribute10": {},
+                                                            "extensionAttribute11": {},
+                                                            "extensionAttribute12": {},
+                                                            "extensionAttribute13": {},
+                                                            "extensionAttribute14": {},
+                                                            "extensionAttribute15": {},
+                                                            "extensionAttribute2": {},
+                                                            "extensionAttribute3": {},
+                                                            "extensionAttribute4": {},
+                                                            "extensionAttribute5": {},
+                                                            "extensionAttribute6": {},
+                                                            "extensionAttribute7": {},
+                                                            "extensionAttribute8": {},
+                                                            "extensionAttribute9": {}
+                                                        },
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "externalSourceName": {},
+                                                    "id": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "isCompliant": {
+                                                        "type": [
+                                                            "boolean",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "isManaged": {
+                                                        "type": [
+                                                            "boolean",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "isRooted": {
+                                                        "type": [
+                                                            "boolean",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "managementType": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "manufacturer": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "mdmAppId": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "model": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "onPremisesLastSyncDateTime": {},
+                                                    "onPremisesSyncEnabled": {},
+                                                    "operatingSystem": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "operatingSystemVersion": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "physicalIds": {
+                                                        "items": {
+                                                            "type": [
+                                                                "string",
+                                                                "null"
+                                                            ]
+                                                        },
+                                                        "type": [
+                                                            "array",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "profileType": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "registrationDateTime": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "sourceType": {},
+                                                    "systemLabels": {
+                                                        "type": [
+                                                            "array",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "trustType": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "deletedDateTime",
+                                                    "accountEnabled",
+                                                    "approximateLastSignInDateTime",
+                                                    "complianceExpirationDateTime",
+                                                    "createdDateTime",
+                                                    "deviceCategory",
+                                                    "deviceId",
+                                                    "deviceMetadata",
+                                                    "deviceOwnership",
+                                                    "deviceVersion",
+                                                    "displayName",
+                                                    "domainName",
+                                                    "enrollmentProfileName",
+                                                    "enrollmentType",
+                                                    "externalSourceName",
+                                                    "isCompliant",
+                                                    "isManaged",
+                                                    "isRooted",
+                                                    "managementType",
+                                                    "manufacturer",
+                                                    "mdmAppId",
+                                                    "model",
+                                                    "onPremisesLastSyncDateTime",
+                                                    "onPremisesSyncEnabled",
+                                                    "operatingSystem",
+                                                    "operatingSystemVersion",
+                                                    "physicalIds",
+                                                    "profileType",
+                                                    "registrationDateTime",
+                                                    "sourceType",
+                                                    "systemLabels",
+                                                    "trustType",
+                                                    "extensionAttributes",
+                                                    "alternativeSecurityIds"
+                                                ],
+                                                "type": [
+                                                    "object",
+                                                    "null"
+                                                ]
+                                            },
+                                            "type": [
+                                                "array",
+                                                "null"
+                                            ]
+                                        }
+                                    },
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ]
+                                }
+                            }
+                        },
+                        "ParsedWindowsUpdateConfig": {
+                            "runAfter": {
+                                "GetWindowsUpdateConfiguration": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@body('GetWindowsUpdateConfiguration')",
+                                "schema": {
+                                    "properties": {
+                                        "value": {
+                                            "items": {
+                                                "properties": {
+                                                    "@@odata.type": {
+                                                        "type": "string"
+                                                    },
+                                                    "createdDateTime": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string"
+                                                    },
+                                                    "displayName": {
+                                                        "type": "string"
+                                                    },
+                                                    "driversExcluded": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "featureUpdatesDeferralPeriodInDays": {
+                                                        "type": "integer"
+                                                    },
+                                                    "featureUpdatesPaused": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "lastModifiedDateTime": {
+                                                        "type": "string"
+                                                    },
+                                                    "microsoftUpdateServiceAllowed": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "qualityUpdatesDeferralPeriodInDays": {
+                                                        "type": "integer"
+                                                    },
+                                                    "qualityUpdatesPaused": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "userPauseAccess": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "@@odata.type",
+                                                    "id",
+                                                    "lastModifiedDateTime",
+                                                    "createdDateTime",
+                                                    "description",
+                                                    "displayName",
+                                                    "microsoftUpdateServiceAllowed",
+                                                    "driversExcluded",
+                                                    "qualityUpdatesDeferralPeriodInDays",
+                                                    "featureUpdatesDeferralPeriodInDays",
+                                                    "qualityUpdatesPaused",
+                                                    "featureUpdatesPaused",
+                                                    "userPauseAccess"
+                                                ],
+                                                "type": "object"
+                                            },
+                                            "type": "array"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureloganalyticsdatacollector": {
+                                "connectionId": "",
+                                "connectionName": "azureloganalyticsdatacollector",
+                                "id": ""
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
