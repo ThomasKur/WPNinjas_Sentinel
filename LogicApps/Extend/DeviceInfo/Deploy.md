@@ -14,10 +14,10 @@ You can create the Azure resources by using the following script or by using the
 ```console
 az login
 az group create --name rg-test1 --location westeurope
-az group deployment create --resource-group rg-test1 --template-uri .\template.bicep
+az group deployment create --resource-group rg-test1 --template-uri 'https://raw.githubusercontent.com/ThomasKur/WPNinjas_Sentinel/main/LogicApps/Extend/DeviceInfo/template.bicep'
 
 ```
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fquickstarts%2Fmicrosoft.storage%2Fstorage-account-create%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FThomasKur%2FWPNinjas_Sentinel%2Fmain%2FLogicApps%2FExtend%2FDeviceInfo%2Ftemplate.bicep)
 
 ## Grant permission to Managed Identity
 
