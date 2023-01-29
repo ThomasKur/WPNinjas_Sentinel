@@ -5,43 +5,48 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "11073939030012755174"
+      "templateHash": "16025570814656682381"
     }
   },
   "parameters": {
-    "workflow_name": {
-      "type": "string",
-      "defaultValue": "la-ExtendedDeviceInfo",
-      "metadata": {
-        "description": "Define the name of the LogicApp."
-      }
-    },
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Location of the resources"
+        "description": "Location of the resources",
+        "name": "Region of the Resources"
+      }
+    },
+    "workflow_name": {
+      "type": "string",
+      "defaultValue": "la-ExtendedDeviceInfo",
+      "metadata": {
+        "description": "Define the name of the LogicApp.",
+        "name": "LogicApp Name"
       }
     },
     "connection_ala_name": {
       "type": "string",
       "defaultValue": "lac-azureloganalyticsdatacollector",
       "metadata": {
-        "description": "Define the name of the LogicApp Conection to LogAnalytics."
+        "description": "Define the name of the LogicApp Conection to LogAnalytics.",
+        "name": "Connection Name"
       }
     },
     "connection_ala_workspacename": {
       "type": "string",
       "defaultValue": "log-prod-sentinel",
       "metadata": {
-        "description": "Name of the existing LogAnalytic Workspace where the data should be saved."
+        "description": "Name of the existing LogAnalytics Workspace where the data should be saved.",
+        "name": "LogAnalytics Workspace Name"
       }
     },
     "connection_ala_workspacename_resourcegroup": {
       "type": "string",
       "defaultValue": "rg-general",
       "metadata": {
-        "description": "Name of the resource group of the LogAnalytic Workspace where the data should be saved."
+        "description": "Name of the resource group of the LogAnalytic Workspace where the data should be saved.",
+        "name": "LogAnalytic Workspace Resource Group Name"
       }
     }
   },
