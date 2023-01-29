@@ -17,7 +17,7 @@ az group create --name rg-test1 --location westeurope
 az group deployment create --resource-group rg-test1 --template-uri 'https://raw.githubusercontent.com/ThomasKur/WPNinjas_Sentinel/main/LogicApps/Extend/DeviceInfo/template.bicep'
 
 ```
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FThomasKur%2FWPNinjas_Sentinel%2Fmain%2FLogicApps%2FExtend%2FDeviceInfo%2Ftemplate.bicep)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FThomasKur%2FWPNinjas_Sentinel%2Fmain%2FLogicApps%2FExtend%2FDeviceInfo%2Ftemplate.json)
 
 ## Grant permission to Managed Identity
 
