@@ -1,0 +1,11 @@
+on: [push]
+name: Azure ARM
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Runs the bicep CLI action - recursive + wildcard
+      - name: Run Bicep build
+        uses: aliencube/bicep-build-actions@v0.3
+        with:
+          files: '**/*.bicep'
