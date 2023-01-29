@@ -1,14 +1,32 @@
-@description('Define the name of the LogicApp.')
-param workflow_name string = 'la-ExtendedDeviceInfo'
 
+@metadata({
+  name: 'Region of the Resources'
+})
 @description('Location of the resources')
 param location string = resourceGroup().location
 
+
+@metadata({
+  name: 'LogicApp Name'
+})
+@description('Define the name of the LogicApp.')
+param workflow_name string = 'la-ExtendedDeviceInfo'
+
+@metadata({
+  name: 'Connection Name'
+})
 @description('Define the name of the LogicApp Conection to LogAnalytics.')
 param connection_ala_name string = 'lac-azureloganalyticsdatacollector'
 
-@description('Name of the existing LogAnalytic Workspace where the data should be saved.')
+@metadata({
+  name: 'LogAnalytics Workspace Name'
+})
+@description('Name of the existing LogAnalytics Workspace where the data should be saved.')
 param connection_ala_workspacename string = 'log-prod-sentinel'
+
+@metadata({
+  name: 'LogAnalytic Workspace Resource Group Name'
+})
 @description('Name of the resource group of the LogAnalytic Workspace where the data should be saved.')
 param connection_ala_workspacename_resourcegroup string = 'rg-general'
 
