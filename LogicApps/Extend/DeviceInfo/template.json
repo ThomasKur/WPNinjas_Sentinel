@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "16025570814656682381"
+      "templateHash": "18291821595753044987"
     }
   },
   "parameters": {
@@ -13,7 +13,7 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Location of the resources",
+        "description": "Location for all resources.",
         "name": "Region of the Resources"
       }
     },
@@ -112,7 +112,7 @@
             }
           },
           "actions": {
-            "For_each": {
+            "For_each_Device": {
               "foreach": "@variables('DeviceList')",
               "actions": {
                 "ListIntuneDevice": {
@@ -128,7 +128,7 @@
                       "type": "ManagedServiceIdentity"
                     },
                     "method": "GET",
-                    "uri": "https://graph.microsoft.com/beta/deviceManagement/managedDevices?$filter=azureADDeviceId eq '@{items('For_each')?['deviceId']}'"
+                    "uri": "https://graph.microsoft.com/beta/deviceManagement/managedDevices?$filter=azureADDeviceId eq '@{items('For_each_Device')?['deviceId']}'"
                   }
                 },
                 "ListMemberships": {
@@ -140,7 +140,7 @@
                       "type": "ManagedServiceIdentity"
                     },
                     "method": "GET",
-                    "uri": "https://graph.microsoft.com/v1.0/devices/@{items('For_each')?['id']}/transitiveMemberOf?$select=id,displayName"
+                    "uri": "https://graph.microsoft.com/v1.0/devices/@{items('For_each_Device')?['id']}/transitiveMemberOf?$select=id,displayName"
                   }
                 },
                 "ListUsers": {
@@ -156,7 +156,7 @@
                       "type": "ManagedServiceIdentity"
                     },
                     "method": "GET",
-                    "uri": "https://graph.microsoft.com/v1.0/devices/@{items('For_each')?['id']}/registeredUsers?$select=id,displayName,mail,userPrincipalName"
+                    "uri": "https://graph.microsoft.com/v1.0/devices/@{items('For_each_Device')?['id']}/registeredUsers?$select=id,displayName,mail,userPrincipalName"
                   }
                 },
                 "Parse_IntuneDevice": {
@@ -395,7 +395,7 @@
                   },
                   "type": "ApiConnection",
                   "inputs": {
-                    "body": "{\n\"id\":\"@{items('For_each')?['id']}\",\n\"AadDeviceId\":\"@{items('For_each')?['deviceId']}\",\n\"IntuneDeviceId\":\"@{first(body('Parse_IntuneDevice')?['value'])?['id']}\",\n\"lastMdmSync\":\"@{first(body('Parse_IntuneDevice')?['value'])?['lastSyncDateTime']}\",\n\"serialNumber\": \"@{first(body('Parse_IntuneDevice')?['value'])?['serialNumber']}\",\n\"deviceOwnership\":\"@{items('For_each')?['deviceOwnership']}\",\n\"displayName\":\"@{items('For_each')?['displayName']}\",\n\"enrollmentType\":\"@{items('For_each')?['enrollmentType']}\",\n\"managementType\":\"@{items('For_each')?['managementType']}\",\n\"manufacturer\":\"@{items('For_each')?['manufacturer']}\",\n\"model\":\"@{items('For_each')?['model']}\",\n\"operatingSystem\":\"@{items('For_each')?['operatingSystem']}\",\n\"operatingSystemVersion\":\"@{items('For_each')?['operatingSystemVersion']}\",\n\"trustType\":\"@{items('For_each')?['trustType']}\",\n\"registrationDateTime\":\"@{items('For_each')?['registrationDateTime']}\",\n\"enrollementProfileName\":\"@{items('For_each')?['enrollmentProfileName']}\",\n\"onPremiseSyncEnabled\":\"@{items('For_each')?['onPremisesSyncEnabled']}\",\n\"sourceType\":\"@{items('For_each')?['sourceType']}\",\n\"accountEnabled\":\"@{items('For_each')?['accountEnabled']}\",\n\"isCompliant\":\"@{items('For_each')?['isCompliant']}\",\n\"isManaged\":\"@{items('For_each')?['isManaged']}\",\n\"GroupMemberships\":@{body('ListMemberships')?['value']},\n\"DeviceUsers\":@{body('ListUsers')?['value']}\n}",
+                    "body": "{\n\"id\":\"@{items('For_each_Device')?['id']}\",\n\"AadDeviceId\":\"@{items('For_each_Device')?['deviceId']}\",\n\"IntuneDeviceId\":\"@{first(body('Parse_IntuneDevice')?['value'])?['id']}\",\n\"lastMdmSync\":\"@{first(body('Parse_IntuneDevice')?['value'])?['lastSyncDateTime']}\",\n\"serialNumber\": \"@{first(body('Parse_IntuneDevice')?['value'])?['serialNumber']}\",\n\"deviceOwnership\":\"@{items('For_each_Device')?['deviceOwnership']}\",\n\"displayName\":\"@{items('For_each_Device')?['displayName']}\",\n\"enrollmentType\":\"@{items('For_each_Device')?['enrollmentType']}\",\n\"managementType\":\"@{items('For_each_Device')?['managementType']}\",\n\"manufacturer\":\"@{items('For_each_Device')?['manufacturer']}\",\n\"model\":\"@{items('For_each_Device')?['model']}\",\n\"operatingSystem\":\"@{items('For_each_Device')?['operatingSystem']}\",\n\"operatingSystemVersion\":\"@{items('For_each_Device')?['operatingSystemVersion']}\",\n\"trustType\":\"@{items('For_each_Device')?['trustType']}\",\n\"registrationDateTime\":\"@{items('For_each_Device')?['registrationDateTime']}\",\n\"enrollementProfileName\":\"@{items('For_each_Device')?['enrollmentProfileName']}\",\n\"onPremiseSyncEnabled\":\"@{items('For_each_Device')?['onPremisesSyncEnabled']}\",\n\"sourceType\":\"@{items('For_each_Device')?['sourceType']}\",\n\"accountEnabled\":\"@{items('For_each_Device')?['accountEnabled']}\",\n\"isCompliant\":\"@{items('For_each_Device')?['isCompliant']}\",\n\"isManaged\":\"@{items('For_each_Device')?['isManaged']}\",\n\"GroupMemberships\":@{body('ListMemberships')?['value']},\n\"DeviceUsers\":@{body('ListUsers')?['value']}\n}",
                     "headers": {
                       "Log-Type": "ExtendedDeviceInfo",
                       "time-generated-field": "@{utcNow()}"
@@ -411,7 +411,7 @@
                 }
               },
               "runAfter": {
-                "Parse_AadDevices": [
+                "Request_AadDevice_and_Handle_Paging": [
                   "Succeeded"
                 ]
               },
@@ -464,7 +464,7 @@
             },
             "Initialize_variable_Memberships": {
               "runAfter": {
-                "Request_AadDevice_and_Handle_Paging": [
+                "Initialize_NextLink": [
                   "Succeeded"
                 ]
               },
@@ -476,291 +476,6 @@
                     "type": "string"
                   }
                 ]
-              }
-            },
-            "Parse_AadDevices": {
-              "runAfter": {
-                "Initialize_variable_Memberships": [
-                  "Succeeded"
-                ]
-              },
-              "type": "ParseJson",
-              "inputs": {
-                "content": "@body('List_AadDevices')",
-                "schema": {
-                  "properties": {
-                    "@@odata.context": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "value": {
-                      "items": {
-                        "properties": {
-                          "accountEnabled": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "alternativeSecurityIds": {
-                            "items": {
-                              "properties": {
-                                "identityProvider": {},
-                                "key": {
-                                  "type": [
-                                    "string",
-                                    "null"
-                                  ]
-                                },
-                                "type": {
-                                  "type": [
-                                    "integer",
-                                    "null"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "type",
-                                "identityProvider",
-                                "key"
-                              ],
-                              "type": [
-                                "object",
-                                "null"
-                              ]
-                            },
-                            "type": [
-                              "array",
-                              "null"
-                            ]
-                          },
-                          "approximateLastSignInDateTime": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "complianceExpirationDateTime": {},
-                          "createdDateTime": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "deletedDateTime": {},
-                          "deviceCategory": {},
-                          "deviceId": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "deviceMetadata": {},
-                          "deviceOwnership": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "deviceVersion": {
-                            "type": [
-                              "integer",
-                              "null"
-                            ]
-                          },
-                          "displayName": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "domainName": {},
-                          "enrollmentProfileName": {},
-                          "enrollmentType": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "extensionAttributes": {
-                            "properties": {
-                              "extensionAttribute1": {},
-                              "extensionAttribute10": {},
-                              "extensionAttribute11": {},
-                              "extensionAttribute12": {},
-                              "extensionAttribute13": {},
-                              "extensionAttribute14": {},
-                              "extensionAttribute15": {},
-                              "extensionAttribute2": {},
-                              "extensionAttribute3": {},
-                              "extensionAttribute4": {},
-                              "extensionAttribute5": {},
-                              "extensionAttribute6": {},
-                              "extensionAttribute7": {},
-                              "extensionAttribute8": {},
-                              "extensionAttribute9": {}
-                            },
-                            "type": [
-                              "object",
-                              "null"
-                            ]
-                          },
-                          "externalSourceName": {},
-                          "id": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "isCompliant": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "isManaged": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "isRooted": {
-                            "type": [
-                              "boolean",
-                              "null"
-                            ]
-                          },
-                          "managementType": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "manufacturer": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "mdmAppId": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "model": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "onPremisesLastSyncDateTime": {},
-                          "onPremisesSyncEnabled": {},
-                          "operatingSystem": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "operatingSystemVersion": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "physicalIds": {
-                            "items": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "type": [
-                              "array",
-                              "null"
-                            ]
-                          },
-                          "profileType": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "registrationDateTime": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "sourceType": {},
-                          "systemLabels": {
-                            "type": [
-                              "array",
-                              "null"
-                            ]
-                          },
-                          "trustType": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "deletedDateTime",
-                          "accountEnabled",
-                          "approximateLastSignInDateTime",
-                          "complianceExpirationDateTime",
-                          "createdDateTime",
-                          "deviceCategory",
-                          "deviceId",
-                          "deviceMetadata",
-                          "deviceOwnership",
-                          "deviceVersion",
-                          "displayName",
-                          "domainName",
-                          "enrollmentProfileName",
-                          "enrollmentType",
-                          "externalSourceName",
-                          "isCompliant",
-                          "isManaged",
-                          "isRooted",
-                          "managementType",
-                          "manufacturer",
-                          "mdmAppId",
-                          "model",
-                          "onPremisesLastSyncDateTime",
-                          "onPremisesSyncEnabled",
-                          "operatingSystem",
-                          "operatingSystemVersion",
-                          "physicalIds",
-                          "profileType",
-                          "registrationDateTime",
-                          "sourceType",
-                          "systemLabels",
-                          "trustType",
-                          "extensionAttributes",
-                          "alternativeSecurityIds"
-                        ],
-                        "type": [
-                          "object",
-                          "null"
-                        ]
-                      },
-                      "type": [
-                        "array",
-                        "null"
-                      ]
-                    }
-                  },
-                  "type": [
-                    "object",
-                    "null"
-                  ]
-                }
               }
             },
             "Request_AadDevice_and_Handle_Paging": {
@@ -912,7 +627,7 @@
                 }
               },
               "runAfter": {
-                "Initialize_NextLink": [
+                "Initialize_variable_Memberships": [
                   "Succeeded"
                 ]
               },
