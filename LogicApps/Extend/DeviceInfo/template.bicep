@@ -1,32 +1,19 @@
+// Title: Extended Device Information
+// Description: The LogicApp creates a new custom and is responsible to import Azure AD Device data enriched with Intune information. 
 
-@metadata({
-  name: 'Region of the Resources'
-})
 @description('Location for all resources (Leave default to use Resource group location).')
 param regionOfResources string = resourceGroup().location
 
 
-@metadata({
-  name: 'LogicApp Name'
-})
 @description('Define the name of the LogicApp.')
 param workflowName string = 'la-ExtendedDeviceInfo'
 
-@metadata({
-  name: 'Connection Name'
-})
 @description('Define the name of the LogicApp Conection to LogAnalytics.')
 param connectionLaName string = 'lac-azureloganalyticsdatacollector'
 
-@metadata({
-  name: 'LogAnalytics Workspace Name'
-})
 @description('Name of the existing LogAnalytics Workspace where the data should be saved.')
 param connectionLaWorkspaceName string = 'log-prod-sentinel'
 
-@metadata({
-  name: 'LogAnalytic Workspace Resource Group Name'
-})
 @description('Name of the resource group of the LogAnalytic Workspace where the data should be saved.')
 param connectionLaWorkspaceResourcegroup string = 'rg-general'
 
