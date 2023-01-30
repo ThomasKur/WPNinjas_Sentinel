@@ -16,19 +16,19 @@ param workflow_name string = 'la-ExtendedDeviceInfo'
   name: 'Connection Name'
 })
 @description('Define the name of the LogicApp Conection to LogAnalytics.')
-param connection_ala_name string = 'lac-azureloganalyticsdatacollector'
+param connectionLaName string = 'lac-azureloganalyticsdatacollector'
 
 @metadata({
   name: 'LogAnalytics Workspace Name'
 })
 @description('Name of the existing LogAnalytics Workspace where the data should be saved.')
-param connection_ala_workspacename string = 'log-prod-sentinel'
+param connectionLaWorkspaceName string = 'log-prod-sentinel'
 
 @metadata({
   name: 'LogAnalytic Workspace Resource Group Name'
 })
 @description('Name of the resource group of the LogAnalytic Workspace where the data should be saved.')
-param connection_ala_workspacename_resourcegroup string = 'rg-general'
+param connectionLaWorkspaceResourcegroup string = 'rg-general'
 
 
 
@@ -36,17 +36,17 @@ var connection_ala_type = 'azureloganalyticsdatacollector'
 
 // Get a reference to the existing log analytics workspace
 resource logAnalyticWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
-  name: connection_ala_workspacename
-  scope: resourceGroup(connection_ala_workspacename_resourcegroup)
+  name: connectionLaWorkspaceName
+  scope: resourceGroup(connectionLaWorkspaceResourcegroup)
 }
 
 // Deploy resources
 
-resource connection_ala_name_resource 'Microsoft.Web/connections@2016-06-01' = {
-  name: connection_ala_name
+resource connectionLaName_resource 'Microsoft.Web/connections@2016-06-01' = {
+  name: connectionLaName
   location: location
   properties: {
-    displayName: connection_ala_name
+    displayName: connectionLaName
     parameterValues: {
       username: logAnalyticWorkspace.properties.customerId
       password: listKeys(logAnalyticWorkspace.id, logAnalyticWorkspace.apiVersion).primarySharedKey
@@ -649,7 +649,7 @@ resource workflow_name_resource 'Microsoft.Logic/workflows@2019-05-01' = {
       '$connections': {
         value: {
           azureloganalyticsdatacollector: {
-            connectionId: connection_ala_name_resource.id
+            connectionId: connectionLaName_resource.id
             connectionName: connection_ala_type
             id: '${subscription().id}/providers/Microsoft.Web/locations/westeurope/managedApis/azureloganalyticsdatacollector'
           }
