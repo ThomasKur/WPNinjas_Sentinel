@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "16135954190544360414"
+      "templateHash": "16805831050941892124"
     }
   },
   "parameters": {
@@ -13,40 +13,35 @@
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Location for all resources (Leave default to use Resource group location).",
-        "name": "Region of the Resources"
+        "description": "Location for all resources (Leave default to use Resource group location)."
       }
     },
     "workflowName": {
       "type": "string",
       "defaultValue": "la-ExtendedDeviceInfo",
       "metadata": {
-        "description": "Define the name of the LogicApp.",
-        "name": "LogicApp Name"
+        "description": "Define the name of the LogicApp."
       }
     },
     "connectionLaName": {
       "type": "string",
       "defaultValue": "lac-azureloganalyticsdatacollector",
       "metadata": {
-        "description": "Define the name of the LogicApp Conection to LogAnalytics.",
-        "name": "Connection Name"
+        "description": "Define the name of the LogicApp Conection to LogAnalytics."
       }
     },
     "connectionLaWorkspaceName": {
       "type": "string",
       "defaultValue": "log-prod-sentinel",
       "metadata": {
-        "description": "Name of the existing LogAnalytics Workspace where the data should be saved.",
-        "name": "LogAnalytics Workspace Name"
+        "description": "Name of the existing LogAnalytics Workspace where the data should be saved."
       }
     },
     "connectionLaWorkspaceResourcegroup": {
       "type": "string",
       "defaultValue": "rg-general",
       "metadata": {
-        "description": "Name of the resource group of the LogAnalytic Workspace where the data should be saved.",
-        "name": "LogAnalytic Workspace Resource Group Name"
+        "description": "Name of the resource group of the LogAnalytic Workspace where the data should be saved."
       }
     }
   },
