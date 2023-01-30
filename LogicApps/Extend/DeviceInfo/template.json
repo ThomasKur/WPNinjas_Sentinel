@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "18291821595753044987"
+      "templateHash": "2156728447146464611"
     }
   },
   "parameters": {
@@ -25,7 +25,7 @@
         "name": "LogicApp Name"
       }
     },
-    "connection_ala_name": {
+    "connectionLaName": {
       "type": "string",
       "defaultValue": "lac-azureloganalyticsdatacollector",
       "metadata": {
@@ -33,7 +33,7 @@
         "name": "Connection Name"
       }
     },
-    "connection_ala_workspacename": {
+    "connectionLaWorkspaceName": {
       "type": "string",
       "defaultValue": "log-prod-sentinel",
       "metadata": {
@@ -41,7 +41,7 @@
         "name": "LogAnalytics Workspace Name"
       }
     },
-    "connection_ala_workspacename_resourcegroup": {
+    "connectionLaWorkspaceResourcegroup": {
       "type": "string",
       "defaultValue": "rg-general",
       "metadata": {
@@ -57,13 +57,13 @@
     {
       "type": "Microsoft.Web/connections",
       "apiVersion": "2016-06-01",
-      "name": "[parameters('connection_ala_name')]",
+      "name": "[parameters('connectionLaName')]",
       "location": "[parameters('location')]",
       "properties": {
-        "displayName": "[parameters('connection_ala_name')]",
+        "displayName": "[parameters('connectionLaName')]",
         "parameterValues": {
-          "username": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('connection_ala_workspacename_resourcegroup')), 'Microsoft.OperationalInsights/workspaces', parameters('connection_ala_workspacename')), '2021-06-01').customerId]",
-          "password": "[listKeys(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('connection_ala_workspacename_resourcegroup')), 'Microsoft.OperationalInsights/workspaces', parameters('connection_ala_workspacename')), '2021-06-01').primarySharedKey]"
+          "username": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('connectionLaWorkspaceResourcegroup')), 'Microsoft.OperationalInsights/workspaces', parameters('connectionLaWorkspaceName')), '2021-06-01').customerId]",
+          "password": "[listKeys(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('connectionLaWorkspaceResourcegroup')), 'Microsoft.OperationalInsights/workspaces', parameters('connectionLaWorkspaceName')), '2021-06-01').primarySharedKey]"
         },
         "customParameterValues": {},
         "nonSecretParameterValues": {},
@@ -640,7 +640,7 @@
           "$connections": {
             "value": {
               "azureloganalyticsdatacollector": {
-                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connection_ala_name'))]",
+                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connectionLaName'))]",
                 "connectionName": "[variables('connection_ala_type')]",
                 "id": "[format('{0}/providers/Microsoft.Web/locations/westeurope/managedApis/azureloganalyticsdatacollector', subscription().id)]"
               }
@@ -649,7 +649,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Web/connections', parameters('connection_ala_name'))]"
+        "[resourceId('Microsoft.Web/connections', parameters('connectionLaName'))]"
       ]
     }
   ]
