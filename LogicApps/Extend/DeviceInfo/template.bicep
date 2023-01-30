@@ -2,15 +2,15 @@
 @metadata({
   name: 'Region of the Resources'
 })
-@description('Location for all resources.')
-param location string = resourceGroup().location
+@description('Location for all resources (Leave default to use Resource group location).')
+param regionOfResources string = resourceGroup().location
 
 
 @metadata({
   name: 'LogicApp Name'
 })
 @description('Define the name of the LogicApp.')
-param workflow_name string = 'la-ExtendedDeviceInfo'
+param workflowName string = 'la-ExtendedDeviceInfo'
 
 @metadata({
   name: 'Connection Name'
@@ -44,7 +44,7 @@ resource logAnalyticWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-
 
 resource connectionLaName_resource 'Microsoft.Web/connections@2016-06-01' = {
   name: connectionLaName
-  location: location
+  location: regionOfResources
   properties: {
     displayName: connectionLaName
     parameterValues: {
@@ -62,16 +62,16 @@ resource connectionLaName_resource 'Microsoft.Web/connections@2016-06-01' = {
       description: 'Azure Log Analytics Data Collector will send data to any Azure Log Analytics workspace.'
       iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1549/1.0.1549.2680/${connection_ala_type}/icon.png'
       brandColor: '#0072C6'
-      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, connection_ala_type)
+      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', regionOfResources, connection_ala_type)
       type: 'Microsoft.Web/locations/managedApis'
     }
     testLinks: []
   }
 }
 
-resource workflow_name_resource 'Microsoft.Logic/workflows@2019-05-01' = {
-  name: workflow_name
-  location: location
+resource workflow_resource 'Microsoft.Logic/workflows@2019-05-01' = {
+  name: workflowName
+  location: regionOfResources
   identity: {
     type: 'SystemAssigned'
   }
