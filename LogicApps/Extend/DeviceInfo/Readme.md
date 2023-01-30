@@ -1,6 +1,6 @@
 # Extend Device Info
 
-The following LogicApp creates a new custom table with valuabel infomration about devices withtin the environment. The deployment consits of two steps:
+The following LogicApp creates a new custom table with valuabel information about devices withtin the environment. The deployment consits of two steps:
 
 1. Creating Azure resources (Logic App and Connector)
 2. Grant permission to Managed Identity of the Logic App.
