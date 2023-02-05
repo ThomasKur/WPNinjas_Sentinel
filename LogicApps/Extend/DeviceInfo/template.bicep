@@ -1,5 +1,6 @@
 // Title: Extended Device Information
-// Description: The LogicApp creates a new custom tble and is responsible to import Azure AD Device data enriched with Intune information. 
+// Description: The LogicApp creates a new custom table and is responsible to import Azure AD Device data enriched with Intune information. 
+// GraphScopes: "Directory.Read.All", "DeviceManagementManagedDevices.Read.All", "DeviceManagementConfiguration.Read.All"
 
 @description('Location for all resources (Leave default to use Resource group location).')
 param regionOfResources string = resourceGroup().location

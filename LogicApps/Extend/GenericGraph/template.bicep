@@ -1,6 +1,6 @@
 // Title: Extend Generic Graph
 // Description: The LogicApp creates a new custom table and can ingest data from any Microsft Graph Endpoint and handles Paging correctly.
-
+// GraphScopes: "To be defined based on choosen Endpoint"
 @description('Location for all resources (Leave default to use Resource group location).')
 param regionOfResources string = resourceGroup().location
 
