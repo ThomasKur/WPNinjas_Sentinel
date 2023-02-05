@@ -1,4 +1,5 @@
-$RepoRawUrl             = "https://raw.githubusercontent.com/ThomasKur/WPNinjas_Sentinel/main/"
+$RepoRawUrl             = "https://raw.githubusercontent.com/ThomasKur/WPNinjas_Sentinel/main"
+$RepoUrl                = "https://github.com/ThomasKur/WPNinjas_Sentinel/blob/main"
 $MainReadmeTemplate     = Get-Content -Path .\Helper\Templates\Main-Readme.md
 
 #region LogicApp / Extend
@@ -10,10 +11,10 @@ $bicepLaExtFiles        = Get-ChildItem -Path .\LogicApps\Extend -Recurse -Filte
 foreach($bicepLaExtFile in $bicepLaExtFiles){
     $Content            = Get-Content -Path $bicepLaExtFile.PSPath
     $Title              = ($Content | Where-Object { $_.StartsWith('// Title: ')}).Replace("// Title: ","")
-    $TitleLink          = "[$Title](" + $bicepLaExtFile.PSParentPath.Replace((Get-Location).Path,"").Replace("\","/")+ "/Readme.md)"
+    $TitleLink          = "[$Title](" + $RepoUrl + $bicepLaExtFile.PSParentPath.Replace((Get-Location).Path,"").Replace("\","/").Replace("Microsoft.PowerShell.Core/FileSystem::","") + "/Readme.md)"
     $Description        = ($Content | Where-Object { $_.StartsWith('// Description: ')}).Replace("// Description: ","")
     $GraphScopes        = ($Content | Where-Object { $_.StartsWith('// GraphScopes: ')}).Replace("// GraphScopes: ","")
-    $RawUrlBicep        = $RepoRawUrl + $bicepLaExtFile.FullName.Replace((Get-Location).Path,"").Replace("\","/").Replace("//","/")
+    $RawUrlBicep        = $RepoRawUrl + $bicepLaExtFile.FullName.Replace((Get-Location).Path,"").Replace("\","/")
     $RawUrlArm          = $RawUrlBicep.Replace("bicep","json")
     $AzDeployLink       = "https://portal.azure.com/#create/Microsoft.Template/uri/" + [uri]::EscapeDataString($RawUrlArm)
     $AzDeployButton     = "[![Deploy to Azure](https://aka.ms/deploytoazurebutton)]($AzDeployLink)"
@@ -28,7 +29,7 @@ foreach($bicepLaExtFile in $bicepLaExtFiles){
 
     $template | Out-File -FilePath "$($bicepLaExtFile.PSParentPath)\Readme.md" -Force
 
-    $MainReadmeTableLaExt  += "| $Title | $Description | $AzDeployButton |" + [System.Environment]::NewLine
+    $MainReadmeTableLaExt  += "| $TitleLink | $Description | $AzDeployButton |" + [System.Environment]::NewLine
 
 }
 

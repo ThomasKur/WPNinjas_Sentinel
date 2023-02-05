@@ -12,7 +12,7 @@ You can create the Azure resources by using the following script or by using the
 ```console
 az login
 az group create --name rg-test1 --location westeurope
-az group deployment create --resource-group rg-test1 --template-uri '%RawUrlBicep'
+az group deployment create --resource-group rg-test1 --template-uri '%RawUrlBicep%'
 
 ```
 

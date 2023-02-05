@@ -1,4 +1,4 @@
-// Title: Extended Device Information
+// Title: Intune Device Information
 // Description: The LogicApp creates a new custom table and is responsible to import Azure AD Device data enriched with Intune information. 
 // GraphScopes: "Directory.Read.All", "DeviceManagementManagedDevices.Read.All", "DeviceManagementConfiguration.Read.All"
 
